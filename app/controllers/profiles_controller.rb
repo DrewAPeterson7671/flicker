@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
-  before_action :set_profile, only: [:show, :edit, :update, :destroy]
+  # before_action :set_profile, only: [:show, :edit, :update, :destroy]
 
   # GET /profiles
   def index
@@ -27,6 +27,7 @@ class ProfilesController < ApplicationController
   # POST /profiles
   def create
     @profile = Profile.new(profile_params)
+    @profile.profile_image_id.attach(params[:profile_image_id])
 
     if @profile.save
       redirect_to @profile, notice: 'Profile was successfully created.'
@@ -52,9 +53,9 @@ class ProfilesController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_profile
-      @profile = Profile.find(params[:id])
-    end
+    # def set_profile
+    #   @profile = Profile.find(params[:id])
+    # end
 
     # Only allow a trusted parameter "white list" through.
     def profile_params
