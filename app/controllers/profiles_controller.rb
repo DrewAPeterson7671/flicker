@@ -1,64 +1,60 @@
 class ProfilesController < ApplicationController
-  # before_action :set_profile, only: [:show, :edit, :update, :destroy]
 
-  # GET /profiles
   def index
-    if params[:direction]
-      @profile = Profile.find(params[:profile_id])
-    end
-    @profiles = Profile.all.sort { |a, b| b.created_at <=> a.created_at }
+    # Code for listing all profiles goes here.
+    @profiles = Profile.all
+    render :index
   end
 
-  # GET /profiles/1
-  def show
-    @profile = Profile.find(params[:id])
-    @answers =  @profile.answers
-  end
-
-  # GET /profiles/new
   def new
+    # Code for new profile form goes here.
     @profile = Profile.new
+    render :new
   end
 
-  # GET /profiles/1/edit
-  def edit
-  end
-
-  # POST /profiles
   def create
-    @profile = Profile.new(profile_params)
-    @profile.profile_image_id.attach(params[:profile_image_id])
-
+    # Code for creating a new profile goes here.
+    @profile = Profile.new(profile_params.merge(user_id: current_user.id))
     if @profile.save
-      redirect_to @profile, notice: 'Profile was successfully created.'
+      flash[:notice] = "Profile successfully added!"
+      redirect_to profiles_path
     else
       render :new
     end
   end
 
-  # PATCH/PUT /profiles/1
+  def edit
+    # Code for edit profile form goes here.
+    @profile = Profile.find(params[:id])
+    render :edit
+  end
+
+  def show
+    # Code for showing a single profile goes here.
+    @profile = Profile.find(params[:id])
+    render :show
+  end
+
   def update
+    # Code for updating an profile goes here.
+    @profile= Profile.find(params[:id])
     if @profile.update(profile_params)
-      redirect_to @profile, notice: 'Profile was successfully updated.'
+      redirect_to profiles_path
     else
       render :edit
     end
   end
 
-  # DELETE /profiles/1
   def destroy
+    # Code for deleting an profile goes here.
+    @profile = Profile.find(params[:id])
     @profile.destroy
-    redirect_to profiles_url, notice: 'Profile was successfully destroyed.'
+    redirect_to profiles_path
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    # def set_profile
-    #   @profile = Profile.find(params[:id])
-    # end
+  def profile_params
+    params.require(:profile).permit(:user_id)
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def profile_params
-      params.require(:profile).permit(:user_id, :body_text, :title)
-    end
 end
